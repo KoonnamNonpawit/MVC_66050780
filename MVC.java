@@ -6,13 +6,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 public class MVC {
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        List<List<String>> db = new ArrayList<>();
-        db = readCSV();
-        for (List<String> list : db) {
-            System.out.println(list);
-        }
+        List<Cow> list = retriveCowFromDatabase();
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new CowView(list).setVisible(true);
+            }
+        });
     }
 
     private static final String COMMA_DELIMITER = ",";
@@ -29,9 +34,18 @@ public class MVC {
         return records;
     }
 
-    private static Cow retriveCowFromDatabase() {
-        Cow cow = new Cow();
-        
-        return cow;
+    private static List<Cow> retriveCowFromDatabase() throws FileNotFoundException, IOException {
+        List<Cow> cowlist = new ArrayList<>();
+        List<List<String>> db = new ArrayList<>();
+        db = readCSV();
+        for (List<String> list : db) {
+            Cow cow = new Cow();
+            cow.setNumber(Integer.valueOf(list.get(0).replace("ï»¿", "").trim()));
+            cow.setColor(list.get(1));
+            cow.setYear(Integer.valueOf(list.get(2)));
+            cow.setMonth(Integer.valueOf(list.get(3)));
+            cowlist.add(cow);
+        }
+        return cowlist;
     }
 }
